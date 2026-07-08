@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Takeshi — The 30-Day Blade | Discipline Course</title>
+<meta name="description" content="A 30-day discipline practice led by Takeshi, the AI Samurai. One order a day. No motivation required.">
+<!-- PLACEHOLDER: swap og:image for a real Takeshi render (1200x630) before launch -->
+<meta property="og:title" content="Takeshi — The 30-Day Blade">
+<meta property="og:description" content="Cut away everything that makes you weak. 30 days. One order a day.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0C0C0E">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="%230C0C0E"/><circle cx="32" cy="32" r="18" fill="%23B3202A"/><text x="32" y="41" font-size="26" text-anchor="middle" fill="%23EDE8E0" font-family="serif">刃</text></svg>'>
+
+<!-- Fonts: Oswald (headlines, condensed/editorial) + Inter (body). font-display swap via API. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   TAKESHI — THE 30-DAY BLADE
+   Design tokens. Sharp edges everywhere (radius: 0), dark,
+   high-contrast, one accent (blood red). Mobile-first.
+   ============================================================ */
+:root {
+  --ink:        #0C0C0E;   /* page background, near-black */
+  --char:       #141417;   /* raised surfaces / cards */
+  --char-2:     #1B1B1F;   /* borders-adjacent surface */
+  --line:       #2A2A30;   /* hairline borders */
+  --paper:      #E8E3DA;   /* primary text, warm off-white */
+  --paper-dim:  #A39F97;   /* secondary text (>=4.5:1 on ink) */
+  --red:        #B3202A;   /* accent: fills, buttons, sun disc */
+  --red-text:   #E05252;   /* accent used AS text on dark (higher contrast) */
+  --max:        1100px;
+  --pad:        20px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: "Inter", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+img, video { max-width: 100%; display: block; }
+a { color: inherit; }
+button, a { touch-action: manipulation; }
+
+::selection { background: var(--red); color: var(--paper); }
+
+/* Focus visibility (keyboard users) */
+:focus-visible { outline: 2px solid var(--red-text); outline-offset: 3px; }
+
+/* Skip link */
+.skip-link {
+  position: absolute; left: -9999px; top: 0; z-index: 100;
+  background: var(--red); color: var(--paper); padding: 12px 20px;
+  font-weight: 600; text-decoration: none;
+}
+.skip-link:focus { left: 0; }
+
+/* ---------- Type scale ---------- */
+h1, h2, h3, .display {
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+}
+h1 { font-size: clamp(2.6rem, 9vw, 5.2rem); }
+h2 { font-size: clamp(1.9rem, 6vw, 3.2rem); }
+h3 { font-size: clamp(1.15rem, 3.5vw, 1.4rem); }
+.kicker {
+  font-family: "Oswald", sans-serif;
+  font-weight: 500;
+  font-size: 0.82rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--red-text);
+  display: block;
+  margin-bottom: 18px;
+}
+.lead { font-size: clamp(1.05rem, 2.5vw, 1.25rem); color: var(--paper-dim); max-width: 34em; }
+
+/* ---------- Layout primitives ---------- */
+.wrap { max-width: var(--max); margin: 0 auto; padding-left: var(--pad); padding-right: var(--pad); }
+section { position: relative; padding: 88px 0; }
+@media (min-width: 768px) { section { padding: 128px 0; } }
+
+/* Decorative kanji watermark per section — purely visual, aria-hidden */
+.kanji-mark {
+  position: absolute; top: 40px; right: -10px;
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "MS Mincho", serif;
+  font-size: clamp(9rem, 26vw, 18rem);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--line);
+  user-select: none; pointer-events: none;
+  z-index: 0;
+}
+section > .wrap { position: relative; z-index: 1; }
+
+/* Scroll reveal — JS adds .in; reduced-motion disables entirely */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---------- Buttons: sharp, weighty, 48px+ touch target ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 56px; padding: 0 40px;
+  background: var(--red); color: #F5F1E8;
+  font-family: "Oswald", sans-serif; font-weight: 600;
+  font-size: 1.05rem; letter-spacing: 0.12em; text-transform: uppercase;
+  text-decoration: none; border: none; cursor: pointer;
+  transition: background 0.15s ease-out, transform 0.15s ease-out;
+}
+.btn:hover { background: #CE2833; }
+.btn:active { transform: scale(0.98); }
+.btn-ghost {
+  background: transparent; color: var(--paper);
+  border: 1px solid var(--line);
+}
+.btn-ghost:hover { background: var(--char); border-color: var(--paper-dim); }
+.btn-note { margin-top: 14px; font-size: 0.85rem; color: var(--paper-dim); letter-spacing: 0.04em; }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 0 72px; position: relative; overflow: hidden;
+}
+/* Hero media: 720x1280 muted loop (assets/takeshi-hero-loop.mp4, ~3.5MB,
+   faststart). 9:16 source cover-cropped on desktop, native-ish on mobile.
+   Poster is the video's own first frame so there is no visual jump. */
+.hero-media {
+  position: absolute; inset: 0; z-index: 0;
+  background: linear-gradient(180deg, #101014 0%, var(--ink) 85%);
+}
+.hero-media video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 50% 20%; /* keep his face in frame on wide crops */
+}
+/* Scrim: keeps bottom-anchored copy readable over the moving image */
+.hero-scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(12,12,14,0.30) 0%, rgba(12,12,14,0.35) 45%, var(--ink) 96%);
+}
+/* Sound toggle — video autoplays muted; one tap for Takeshi's voice */
+.sound-btn {
+  position: absolute; z-index: 2;
+  top: max(18px, env(safe-area-inset-top)); right: 18px;
+  display: inline-flex; align-items: center; gap: 10px;
+  min-height: 44px; padding: 0 18px;
+  background: rgba(12,12,14,0.55); backdrop-filter: blur(6px);
+  border: 1px solid var(--line); color: var(--paper);
+  font-family: "Oswald", sans-serif; font-weight: 500;
+  font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase;
+  cursor: pointer;
+}
+.sound-btn:hover { border-color: var(--paper-dim); }
+.sound-btn svg { width: 16px; height: 16px; fill: currentColor; }
+.sound-btn.on { border-color: var(--red); color: #fff; }
+.hero-kanji {
+  position: absolute; right: 6vw; top: 12%;
+  writing-mode: vertical-rl;
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "MS Mincho", serif;
+  font-size: clamp(2rem, 6vw, 3.4rem);
+  letter-spacing: 0.35em;
+  color: rgba(232,227,218,0.28);
+  user-select: none; pointer-events: none;
+}
+.hero-content { position: relative; z-index: 1; }
+.hero .kicker { color: var(--paper-dim); }
+.hero .kicker b { color: var(--red-text); font-weight: 500; }
+.hero h1 { max-width: 11em; }
+.hero .lead { margin: 22px 0 36px; color: var(--paper); opacity: 0.85; }
+.hero-scroll-hint {
+  position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+  color: var(--paper-dim); font-size: 1.2rem; z-index: 1;
+  animation: hint 2.4s ease-in-out infinite;
+}
+@keyframes hint { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 8px); } }
+@media (prefers-reduced-motion: reduce) { .hero-scroll-hint { animation: none; } }
+
+/* ============================================================
+   PROBLEM — weighted single lines
+   ============================================================ */
+.problem { background: var(--ink); border-top: 1px solid var(--line); }
+.problem-lines { display: grid; gap: 34px; max-width: 760px; }
+.problem-line {
+  font-family: "Oswald", sans-serif; font-weight: 500;
+  font-size: clamp(1.5rem, 5vw, 2.6rem);
+  text-transform: uppercase; line-height: 1.15;
+  color: var(--paper-dim);
+}
+.problem-line strong { color: var(--paper); font-weight: 600; }
+.problem-pivot {
+  margin-top: 56px; padding-left: 22px;
+  border-left: 3px solid var(--red);
+  font-size: clamp(1.15rem, 3vw, 1.5rem);
+  color: var(--paper); max-width: 30em;
+}
+
+/* ============================================================
+   WHO TAKESHI IS
+   ============================================================ */
+.who { border-top: 1px solid var(--line); }
+.who-grid { display: grid; gap: 48px; align-items: center; }
+@media (min-width: 880px) { .who-grid { grid-template-columns: 5fr 6fr; gap: 72px; } }
+/* Takeshi portrait still — 9:16 render cropped into a 4:5 frame.
+   assets/takeshi-portrait.jpg, ~100KB, lazy-loaded below the fold. */
+.who-portrait {
+  aspect-ratio: 4 / 5;
+  background: linear-gradient(160deg, #17171B 0%, #101013 100%);
+  border: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+}
+.who-portrait img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 50% 20%; /* bias crop toward his face in the 9:16 frame */
+}
+.who-body p { margin-bottom: 1.1em; font-size: clamp(1rem, 2.3vw, 1.15rem); }
+.who-body p:last-child { margin-bottom: 0; }
+.who-body em { font-style: normal; color: var(--red-text); }
+
+/* ============================================================
+   SOCIAL PROOF
+   ============================================================ */
+.proof { background: var(--char); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--line);
+  margin-bottom: 56px;
+}
+.stat { padding: 26px 12px; text-align: center; }
+.stat + .stat { border-left: 1px solid var(--line); }
+.stat b {
+  display: block;
+  font-family: "Oswald", sans-serif; font-weight: 700;
+  font-size: clamp(1.5rem, 5vw, 2.6rem); line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.stat span { font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--paper-dim); }
+.cards { display: grid; gap: 20px; }
+@media (min-width: 768px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+.t-card {
+  background: var(--ink); border: 1px solid var(--line);
+  padding: 28px 24px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.t-card blockquote { font-size: 1rem; line-height: 1.55; }
+.t-card footer { margin-top: auto; font-size: 0.85rem; color: var(--paper-dim); }
+.t-card footer b { color: var(--paper); font-weight: 600; display: block; }
+.proof-disclaimer { margin-top: 28px; font-size: 0.78rem; color: var(--paper-dim); }
+
+/* ============================================================
+   OFFER — THE 30-DAY BLADE
+   ============================================================ */
+.offer .kicker { color: var(--red-text); }
+.offer-intro { margin: 0 0 64px; }
+.weeks { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-bottom: 72px; }
+@media (min-width: 880px) { .weeks { grid-template-columns: repeat(4, 1fr); } }
+.week { background: var(--ink); padding: 30px 24px; }
+.week .num {
+  font-family: "Oswald", sans-serif; font-weight: 700;
+  font-size: 0.78rem; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--red-text); display: block; margin-bottom: 10px;
+}
+.week h3 { margin-bottom: 10px; }
+.week p { font-size: 0.92rem; color: var(--paper-dim); }
+.offer-grid { display: grid; gap: 48px; }
+@media (min-width: 880px) { .offer-grid { grid-template-columns: 6fr 5fr; gap: 72px; align-items: start; } }
+.includes { list-style: none; display: grid; gap: 0; border-top: 1px solid var(--line); }
+.includes li {
+  display: flex; gap: 16px; align-items: baseline;
+  padding: 18px 4px; border-bottom: 1px solid var(--line);
+}
+.includes li::before {
+  /* blade tick — decorative */
+  content: ""; flex: none; width: 14px; height: 2px;
+  background: var(--red); transform: translateY(-4px) rotate(-45deg);
+}
+.includes b { font-weight: 600; }
+.includes span { color: var(--paper-dim); font-size: 0.95rem; }
+.price-box {
+  background: var(--char); border: 1px solid var(--line);
+  padding: 40px 32px;
+  position: sticky; top: 24px;
+}
+.price-box .name { font-family: "Oswald", sans-serif; font-weight: 600; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.price-box .price {
+  font-family: "Oswald", sans-serif; font-weight: 700;
+  font-size: 4rem; line-height: 1; margin: 18px 0 4px;
+  font-variant-numeric: tabular-nums;
+}
+.price-box .price-sub { color: var(--paper-dim); font-size: 0.9rem; margin-bottom: 28px; }
+.price-box .btn { width: 100%; }
+.dojo-note {
+  margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line);
+  font-size: 0.85rem; color: var(--paper-dim);
+}
+.dojo-note b { color: var(--paper); }
+
+/* ============================================================
+   FAQ — native details/summary
+   ============================================================ */
+.faq { border-top: 1px solid var(--line); }
+.faq-list { max-width: 760px; border-top: 1px solid var(--line); }
+.faq-list details { border-bottom: 1px solid var(--line); }
+.faq-list summary {
+  list-style: none; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center; gap: 20px;
+  padding: 22px 4px; min-height: 48px;
+  font-family: "Oswald", sans-serif; font-weight: 500;
+  font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary::after {
+  content: "+"; flex: none;
+  font-family: "Inter", sans-serif; font-weight: 400;
+  font-size: 1.5rem; color: var(--red-text); line-height: 1;
+  transition: transform 0.2s ease-out;
+}
+.faq-list details[open] summary::after { transform: rotate(45deg); }
+.faq-list details p { padding: 0 4px 24px; color: var(--paper-dim); max-width: 42em; }
+
+/* ============================================================
+   FINAL CTA
+   ============================================================ */
+.final {
+  text-align: center;
+  background:
+    radial-gradient(ellipse 70% 90% at 50% 100%, rgba(179,32,42,0.16) 0%, transparent 65%),
+    var(--ink);
+  border-top: 1px solid var(--line);
+}
+.final h2 { max-width: 14em; margin: 0 auto 20px; }
+.final .lead { margin: 0 auto 40px; }
+.urgency {
+  display: inline-block; margin-top: 26px;
+  font-size: 0.82rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--red-text);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 44px 0 calc(44px + env(safe-area-inset-bottom));
+  font-size: 0.85rem; color: var(--paper-dim);
+}
+.footer-row { display: flex; flex-wrap: wrap; gap: 12px 28px; margin-bottom: 20px; }
+.footer-row a { text-decoration: none; }
+.footer-row a:hover { color: var(--paper); text-decoration: underline; }
+.footer-honesty { max-width: 46em; font-size: 0.78rem; line-height: 1.6; }
+
+/* ============================================================
+   STICKY MOBILE CTA — appears after hero (JS toggles .show)
+   ============================================================ */
+.sticky-cta {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+  padding: 10px var(--pad) calc(10px + env(safe-area-inset-bottom));
+  background: rgba(12,12,14,0.92);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  transform: translateY(110%);
+  transition: transform 0.3s ease-out;
+}
+.sticky-cta.show { transform: none; }
+.sticky-cta .sc-price { font-family: "Oswald", sans-serif; font-weight: 600; font-size: 1.1rem; }
+.sticky-cta .sc-price span { display: block; font-family: "Inter", sans-serif; font-weight: 400; font-size: 0.7rem; color: var(--paper-dim); letter-spacing: 0.1em; text-transform: uppercase; }
+.sticky-cta .btn { min-height: 48px; padding: 0 26px; font-size: 0.9rem; }
+@media (min-width: 880px) { .sticky-cta { display: none; } }
+@media (prefers-reduced-motion: reduce) { .sticky-cta { transition: none; } }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<main id="main">
+
+<!-- ============================================================
+     1. HERO
+     ============================================================ -->
+<header class="hero">
+  <div class="hero-media" aria-hidden="true">
+    <video id="heroVideo"
+           src="assets/takeshi-hero-loop.mp4"
+           poster="assets/takeshi-hero-poster.jpg"
+           autoplay muted loop playsinline></video>
+    <div class="hero-scrim"></div>
+  </div>
+  <span class="hero-kanji" aria-hidden="true">武士道</span>
+  <button class="sound-btn" id="soundBtn" type="button" aria-pressed="false" aria-label="Unmute — hear Takeshi speak">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>
+    <span id="soundLabel">Sound</span>
+  </button>
+
+  <div class="wrap hero-content">
+    <span class="kicker"><b>Takeshi</b> — The AI Samurai</span>
+    <h1>Cut away everything that makes you weak.</h1>
+    <p class="lead">A 30-day discipline practice. One order a day. No motivation required.</p>
+    <a class="btn" href="#offer">Begin the 30 Days</a>
+    <p class="btn-note">$47 one-time&nbsp;&nbsp;·&nbsp;&nbsp;15–20 min a day&nbsp;&nbsp;·&nbsp;&nbsp;no equipment</p>
+  </div>
+  <div class="hero-scroll-hint" aria-hidden="true">↓</div>
+</header>
+
+<!-- ============================================================
+     2. THE PROBLEM
+     ============================================================ -->
+<section class="problem" aria-labelledby="problem-title">
+  <span class="kanji-mark" aria-hidden="true">乱</span>
+  <div class="wrap">
+    <h2 id="problem-title" class="kicker" style="font-size:0.82rem">You know this feeling</h2>
+    <div class="problem-lines">
+      <p class="problem-line reveal">You start strong. <strong>You fade by Friday.</strong></p>
+      <p class="problem-line reveal">You know what to do. <strong>You don't do it.</strong></p>
+      <p class="problem-line reveal">Ten things open. <strong>Nothing finished.</strong></p>
+    </div>
+    <p class="problem-pivot reveal">Motivation is weather. It comes, it goes. Discipline is the blade you carry through all of it. It must be forged. That takes 30 days.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     3. WHO TAKESHI IS
+     ============================================================ -->
+<section class="who" aria-labelledby="who-title">
+  <span class="kanji-mark" aria-hidden="true">刃</span>
+  <div class="wrap">
+    <div class="who-grid">
+      <figure class="who-portrait reveal">
+        <img src="assets/takeshi-portrait.jpg"
+             alt="Takeshi, the AI samurai, seated in a dim dojo before a rack of katana"
+             width="800" height="1433" loading="lazy">
+      </figure>
+      <div class="who-body reveal">
+        <span class="kicker">Who Takeshi Is</span>
+        <h2 id="who-title" style="margin-bottom:24px">Not a man.<br>A standard.</h2>
+        <p>Takeshi is an AI-built samurai — and he will tell you that himself. He was not created to entertain you. He was created to hold a line you keep letting slip.</p>
+        <p>The samurai did not wait to feel ready. They trained the same cut ten thousand times, until the blade moved without asking permission. That is the whole philosophy: <em>repetition over mood.</em></p>
+        <p>Takeshi gives you one order a day. You carry it out. That is the entire relationship.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     4. SOCIAL PROOF
+     ============================================================ -->
+<section class="proof" aria-labelledby="proof-title">
+  <div class="wrap">
+    <h2 id="proof-title" class="kicker" style="font-size:0.82rem">The practice is live, daily</h2>
+
+    <!-- PLACEHOLDER STATS: swap in real numbers before launch. These are illustrative. -->
+    <div class="stats reveal">
+      <div class="stat"><b>1.2M</b><span>Followers</span></div>
+      <div class="stat"><b>48M+</b><span>Views</span></div>
+      <div class="stat"><b>3,400</b><span>Students</span></div>
+    </div>
+
+    <!-- PLACEHOLDER TESTIMONIALS: replace with real, permissioned quotes. -->
+    <div class="cards">
+      <article class="t-card reveal">
+        <blockquote>&ldquo;Day 9 was the shift. I stopped negotiating with myself. There was nothing to negotiate — there was just the order.&rdquo;</blockquote>
+        <footer><b>Marcus T.</b> Day 23 of 30</footer>
+      </article>
+      <article class="t-card reveal">
+        <blockquote>&ldquo;I've bought courses before. This is the first one I finished. It's not information — it's a spine.&rdquo;</blockquote>
+        <footer><b>Daniel R.</b> Completed the Blade</footer>
+      </article>
+      <article class="t-card reveal">
+        <blockquote>&ldquo;Twenty minutes a day sounded like nothing. By week three it had rebuilt my mornings, my desk, my head.&rdquo;</blockquote>
+        <footer><b>Alex K.</b> Completed the Blade</footer>
+      </article>
+    </div>
+    <!-- PLACEHOLDER: remove or update once real numbers/testimonials are in -->
+    <p class="proof-disclaimer">Stats and testimonials above are placeholder content for build purposes.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     5. THE OFFER — THE 30-DAY BLADE
+     ============================================================ -->
+<section class="offer" id="offer" aria-labelledby="offer-title">
+  <span class="kanji-mark" aria-hidden="true">道</span>
+  <div class="wrap">
+    <div class="offer-intro">
+      <span class="kicker">The Flagship Course</span>
+      <h2 id="offer-title" style="margin-bottom:20px">The 30-Day Blade</h2>
+      <p class="lead">Thirty days. Each day: one short lesson from Takeshi, one practice to execute. Fifteen to twenty minutes. Miss the feeling, keep the practice. By day 30, you are someone who finishes.</p>
+    </div>
+
+    <!-- Week-by-week arc -->
+    <div class="weeks reveal">
+      <div class="week">
+        <span class="num">Week 01</span>
+        <h3>Stillness</h3>
+        <p>A shaking hand cannot cut. You learn to stand still before you learn to strike. Day 1: The First Cut — stillness before action.</p>
+      </div>
+      <div class="week">
+        <span class="num">Week 02</span>
+        <h3>Focus</h3>
+        <p>One target at a time. You will choose it the night before, and everything else waits its turn.</p>
+      </div>
+      <div class="week">
+        <span class="num">Week 03</span>
+        <h3>Resistance</h3>
+        <p>The week most people quit. The practices get heavier on purpose. You will not be most people.</p>
+      </div>
+      <div class="week">
+        <span class="num">Week 04</span>
+        <h3>Mastery</h3>
+        <p>Repetition until the blade moves without you. The practice becomes who you are, not what you do.</p>
+      </div>
+    </div>
+
+    <div class="offer-grid">
+      <div class="reveal">
+        <h3 style="margin-bottom:24px">What you receive</h3>
+        <ul class="includes">
+          <li><div><b>30 daily lessons.</b> <span>Takeshi speaks. Under five minutes. One principle, no filler.</span></div></li>
+          <li><div><b>30 daily practices.</b> <span>One concrete order per day. Executable in 15–20 minutes.</span></div></li>
+          <li><div><b>The Blade Log.</b> <span>A printable tracking sheet. Thirty marks. You will want all thirty.</span></div></li>
+          <li><div><b>The Code.</b> <span>Takeshi's discipline code on one page. Print it. Put it where you work.</span></div></li>
+          <li><div><b>Lifetime access.</b> <span>Fall off, come back, run it again. The blade does not expire.</span></div></li>
+        </ul>
+      </div>
+
+      <div class="price-box reveal">
+        <p class="name">The 30-Day Blade</p>
+        <!-- PLACEHOLDER PRICE: $47 is a stand-in. Update here AND in the sticky mobile bar + hero note. -->
+        <p class="price">$47</p>
+        <p class="price-sub">One-time. Not a subscription.</p>
+        <!-- CHECKOUT STUB ————————————————————————————————
+             Replace href="#checkout" with your Stripe Payment Link
+             (or Gumroad product URL), e.g.:
+             <a class="btn" href="https://buy.stripe.com/XXXX">Begin the 30 Days</a>
+             No other wiring needed for a static site. -->
+        <a class="btn" href="#checkout" data-checkout>Begin the 30 Days</a>
+        <p class="btn-note">Instant access · 14-day guarantee (placeholder)</p>
+        <p class="dojo-note"><b>After the Blade: The Dojo.</b> Ongoing training and a standing brotherhood, opening first to those who finish the 30 days. Not for sale yet.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     6. FAQ
+     ============================================================ -->
+<section class="faq" aria-labelledby="faq-title">
+  <span class="kanji-mark" aria-hidden="true">問</span>
+  <div class="wrap">
+    <span class="kicker">Before you ask</span>
+    <h2 id="faq-title" style="margin-bottom:40px">Questions</h2>
+    <div class="faq-list reveal">
+      <details>
+        <summary>Is Takeshi real?</summary>
+        <p>Takeshi is an AI-generated character — that has never been hidden. The curriculum behind him is real, written by humans, and it either changes your days or it doesn't. Judge the practice, not the messenger.</p>
+      </details>
+      <details>
+        <summary>Do I need equipment?</summary>
+        <p>No. No sword, no gym, no apps to buy. You need a place to stand, something to write with, and 15–20 minutes you currently give to your phone.</p>
+      </details>
+      <details>
+        <summary>How much time per day?</summary>
+        <p>Fifteen to twenty minutes: a lesson under five minutes, then one practice. If you cannot find twenty minutes, that is not a scheduling problem — it is Day 1 material.</p>
+      </details>
+      <details>
+        <summary>What if I miss a day?</summary>
+        <p>You resume. A blade is not ruined by one bad strike — it is ruined by being left in the rain. Lifetime access means the path waits for you; it does not disappear.</p>
+      </details>
+      <details>
+        <summary>What is the refund policy?</summary>
+        <!-- PLACEHOLDER POLICY: confirm your actual guarantee terms before launch. -->
+        <p>Placeholder: 14-day money-back guarantee — complete the first week of practices, and if it gave you nothing, write in and be refunded. Final terms to be confirmed.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     7. FINAL CTA
+     ============================================================ -->
+<section class="final" aria-labelledby="final-title">
+  <div class="wrap">
+    <span class="kicker">The 30-Day Blade — $47</span>
+    <h2 id="final-title">A year from now you will be someone. Choose who.</h2>
+    <p class="lead" style="max-width:28em">Thirty days. One order a day. Start tonight or keep scrolling — the blade does not care, but you will.</p>
+    <a class="btn" href="#checkout" data-checkout>Begin the 30 Days</a>
+    <!-- PLACEHOLDER URGENCY: cohort framing is illustrative copy, NOT a real claim.
+         Replace with a true statement (real cohort date / real cap) or delete before launch. -->
+    <br><span class="urgency">Placeholder: next cohort begins on the 1st — enrollment closes before it starts</span>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================
+     8. FOOTER
+     ============================================================ -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-row">
+      <!-- PLACEHOLDER LINKS: point at real profiles / pages before launch -->
+      <a href="#" rel="noopener">Instagram</a>
+      <a href="#" rel="noopener">TikTok</a>
+      <a href="mailto:hello@example.com">Contact</a>
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+    </div>
+    <p class="footer-honesty">Takeshi is an AI-generated character. The persona is fiction; the curriculum, the practices, and the people running this are real. © <span id="year">2026</span> The 30-Day Blade.</p>
+  </div>
+</footer>
+
+<!-- Sticky mobile CTA — hidden on desktop, slides up after the hero -->
+<div class="sticky-cta" id="stickyCta" aria-hidden="true">
+  <p class="sc-price">$47 <span>The 30-Day Blade</span></p>
+  <a class="btn" href="#checkout" data-checkout tabindex="-1">Begin</a>
+</div>
+
+<script>
+/* ------------------------------------------------------------
+   Minimal JS: scroll reveals + sticky mobile CTA. No libraries.
+   ------------------------------------------------------------ */
+(function () {
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* Scroll reveal */
+  var targets = document.querySelectorAll(".reveal");
+  if (reduced || !("IntersectionObserver" in window)) {
+    targets.forEach(function (el) { el.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });
+    targets.forEach(function (el) { io.observe(el); });
+  }
+
+  /* Sticky mobile CTA: show once the visitor scrolls past the hero,
+     hide again near the offer's own price box to avoid doubling up. */
+  var sticky = document.getElementById("stickyCta");
+  var hero = document.querySelector(".hero");
+  var priceBox = document.querySelector(".price-box");
+  function updateSticky() {
+    var pastHero = window.scrollY > hero.offsetHeight * 0.8;
+    var r = priceBox.getBoundingClientRect();
+    var priceVisible = r.top < window.innerHeight && r.bottom > 0;
+    var show = pastHero && !priceVisible;
+    sticky.classList.toggle("show", show);
+    sticky.setAttribute("aria-hidden", show ? "false" : "true");
+    sticky.querySelector("a").tabIndex = show ? 0 : -1;
+  }
+  var ticking = false;
+  window.addEventListener("scroll", function () {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(function () { updateSticky(); ticking = false; });
+    }
+  }, { passive: true });
+  updateSticky();
+
+  /* Hero video: reduced-motion users get the still poster instead.
+     Sound button unmutes and restarts the clip (it's Day 1's lesson,
+     so it plays from the first word); tapping again re-mutes. */
+  var hv = document.getElementById("heroVideo");
+  var sb = document.getElementById("soundBtn");
+  var sl = document.getElementById("soundLabel");
+  if (reduced) {
+    hv.removeAttribute("autoplay");
+    hv.pause();
+  }
+  sb.addEventListener("click", function () {
+    if (hv.muted) {
+      hv.muted = false;
+      hv.currentTime = 0;
+      hv.play().catch(function () {});
+      sb.classList.add("on");
+      sb.setAttribute("aria-pressed", "true");
+      sb.setAttribute("aria-label", "Mute");
+      sl.textContent = "Mute";
+    } else {
+      hv.muted = true;
+      sb.classList.remove("on");
+      sb.setAttribute("aria-pressed", "false");
+      sb.setAttribute("aria-label", "Unmute — hear Takeshi speak");
+      sl.textContent = "Sound";
+    }
+  });
+
+  /* CHECKOUT STUB: once a real Stripe/Gumroad URL is in the hrefs,
+     delete this block. Until then, clicking scrolls to the offer. */
+  document.querySelectorAll("[data-checkout]").forEach(function (a) {
+    a.addEventListener("click", function (ev) {
+      if (a.getAttribute("href") === "#checkout") {
+        ev.preventDefault();
+        document.getElementById("offer").scrollIntoView(reduced ? {} : { behavior: "smooth" });
+      }
+    });
+  });
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+})();
+</script>
+
+</body>
+</html>
