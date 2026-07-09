@@ -631,11 +631,21 @@ section > .wrap { position: relative; z-index: 1; }
   <a class="btn" href="#checkout" data-checkout tabindex="-1">Begin</a>
 </div>
 
+<!-- Gumroad overlay checkout: lets buyers pay in a popup without
+     leaving the page. Inert until CHECKOUT_URL below is set. -->
+<script src="https://gumroad.com/js/gumroad.js" defer></script>
+
 <script>
 /* ------------------------------------------------------------
    Minimal JS: scroll reveals + sticky mobile CTA. No libraries.
    ------------------------------------------------------------ */
 (function () {
+  /* ============ PAYMENT CONFIG ============
+     Paste the Gumroad product link between the quotes, e.g.
+     "https://takeshiblade.gumroad.com/l/blade"
+     Every buy button on the page picks it up automatically. */
+  var CHECKOUT_URL = "";
+  /* ======================================== */
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* Scroll reveal */
@@ -702,15 +712,19 @@ section > .wrap { position: relative; z-index: 1; }
     }
   });
 
-  /* CHECKOUT STUB: once a real Stripe/Gumroad URL is in the hrefs,
-     delete this block. Until then, clicking scrolls to the offer. */
+  /* Checkout buttons: if CHECKOUT_URL is set, every buy button links to
+     Gumroad (the loaded gumroad.js turns them into an overlay checkout).
+     Until then, clicking scrolls to the offer section. */
   document.querySelectorAll("[data-checkout]").forEach(function (a) {
-    a.addEventListener("click", function (ev) {
-      if (a.getAttribute("href") === "#checkout") {
+    if (CHECKOUT_URL) {
+      a.href = CHECKOUT_URL;
+      a.classList.add("gumroad-button"); /* opt into Gumroad overlay */
+    } else {
+      a.addEventListener("click", function (ev) {
         ev.preventDefault();
         document.getElementById("offer").scrollIntoView(reduced ? {} : { behavior: "smooth" });
-      }
-    });
+      });
+    }
   });
 
   document.getElementById("year").textContent = new Date().getFullYear();
