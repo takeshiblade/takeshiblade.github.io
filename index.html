@@ -630,20 +630,16 @@ section > .wrap { position: relative; z-index: 1; }
   <a class="btn" href="#checkout" data-checkout tabindex="-1">Begin</a>
 </div>
 
-<!-- Gumroad overlay checkout: lets buyers pay in a popup without
-     leaving the page. Inert until CHECKOUT_URL below is set. -->
-<script src="https://gumroad.com/js/gumroad.js" defer></script>
-
 <script>
 /* ------------------------------------------------------------
    Minimal JS: scroll reveals + sticky mobile CTA. No libraries.
    ------------------------------------------------------------ */
 (function () {
   /* ============ PAYMENT CONFIG ============
-     Paste the Gumroad product link between the quotes, e.g.
-     "https://takeshiblade.gumroad.com/l/blade"
-     Every buy button on the page picks it up automatically. */
-  var CHECKOUT_URL = "https://beckley06.gumroad.com/l/blade";
+     Direct Gumroad checkout — buyers land on the payment form
+     immediately (the site itself is the sales pitch; the overlay
+     popup broke once the product got a custom landing page). */
+  var CHECKOUT_URL = "https://gumroad.com/checkout?product=csyggy&quantity=1";
   /* ======================================== */
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -711,13 +707,11 @@ section > .wrap { position: relative; z-index: 1; }
     }
   });
 
-  /* Checkout buttons: if CHECKOUT_URL is set, every buy button links to
-     Gumroad (the loaded gumroad.js turns them into an overlay checkout).
-     Until then, clicking scrolls to the offer section. */
+  /* Checkout buttons: every buy button navigates straight to the
+     Gumroad checkout. Until a URL is set, clicking scrolls to the offer. */
   document.querySelectorAll("[data-checkout]").forEach(function (a) {
     if (CHECKOUT_URL) {
       a.href = CHECKOUT_URL;
-      a.classList.add("gumroad-button"); /* opt into Gumroad overlay */
     } else {
       a.addEventListener("click", function (ev) {
         ev.preventDefault();
